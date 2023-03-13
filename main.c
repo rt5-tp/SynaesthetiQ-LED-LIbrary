@@ -114,7 +114,7 @@ ws2811_t ledstring =
     },
 };
 
-ws2811_led_t *matrix;
+// ws2811_led_t *matrix;
 
 static uint8_t running = 1;
 
@@ -166,14 +166,14 @@ int main(int argc, char *argv[])
 	ledstring.channel[0].leds[0] = colour;
 
 	for (i = 1; i < chain+1; i++) {
-                ledstring.channel[0].leds[i] = matrixLimit(rgbtobgr(colour));
-        }
+            ledstring.channel[0].leds[i] = matrixLimit(rgbtobgr(colour));
+    }
 
-        if ((ret = ws2811_render(&ledstring)) != WS2811_SUCCESS)
-        {
-            fprintf(stderr, "ws2811_render failed: %s\n", ws2811_get_return_t_str(ret));
-            return ret;
-        }
+    if ((ret = ws2811_render(&ledstring)) != WS2811_SUCCESS)
+    {
+        fprintf(stderr, "ws2811_render failed: %s\n", ws2811_get_return_t_str(ret));
+        return ret;
+    }
 
 	getchar();
 
@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
     if (clear_on_exit) {
         // matrix_clear();
         // matrix_render();
-	colour = 0x00000000;
+	    colour = 0x00000000;
 
         ledstring.channel[0].leds[0] = colour;
 
