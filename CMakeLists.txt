@@ -4,4 +4,4 @@ project(SynaesthetiQ)
 
 add_library(../../rpi_ws281x/build/libws2811.a)
 
-add_executable(SynaesthetiQ main.c)
+add_executable(SynaesthetiQ main.c synaesthetiq.cpp)

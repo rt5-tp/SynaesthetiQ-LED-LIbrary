@@ -1,4 +1,4 @@
-#include <synaesthetiq.hpp>
+#include "synaesthetiq.hpp"
 
 ws2811_led_t SynaesthetiQ::RGBToBGR(ws2811_led_t ColourIn) {
 	ws2811_led_t outColour = 0x00000000;
@@ -88,7 +88,8 @@ SynaesthetiQ::~SynaesthetiQ() {
 };
 
 void SynaesthetiQ::setBigLEDColour(ws2811_led_t Colour) {
-    bigLEDColour = bigLEDLimit(Colour);
+    // limit and convert to BGR
+    bigLEDColour = RGBToBGR(bigLEDLimit(Colour));
 };
 
 void SynaesthetiQ::setMatrixColour(ws2811_led_t Colour) {
@@ -121,11 +122,7 @@ void SynaesthetiQ::setMatrixPixelColour(int x,int y,int Colour) {
 };
 
 void SynaesthetiQ::clearOutput() {
-    ws2811_led_t Colour = colourOff;
-
-    bigLEDColour = Colour;
-    setMatrixColour(Colour);
-    
+    setBigLEDColour(colourOff);
     render();
 }
 
