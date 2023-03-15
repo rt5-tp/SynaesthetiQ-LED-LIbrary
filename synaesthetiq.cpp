@@ -52,7 +52,7 @@ ws2811_led_t SynaesthetiQ::basicMatrixLimit(ws2811_led_t ColourIn) {
 
 SynaesthetiQ::SynaesthetiQ(){
 
-    ws2811_t ledstring = {
+    ledstring = {
         .freq = WS2811_TARGET_FREQ,
         .dmanum = DMA,
         .channel =
@@ -83,6 +83,8 @@ SynaesthetiQ::SynaesthetiQ(){
         fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(ret));
         exit(ret);
     }
+
+    // ledstring = leds;
     // rawLEDs = &ledstring.channel[0];
 }
 
@@ -109,10 +111,12 @@ void SynaesthetiQ::setMatrixColour(ws2811_led_t Colour) {
         end = matrixPixels;
     }
 
-    printf("%u %u",start,end);
+    // printf("%u %u",start,end);
 
     for (int i = start; i < end; i++) {
-        ledstring.channel[0].leds[i] = RGBToBGR(Colour);
+        ws2811_led_t c = RGBToBGR(Colour);
+        // printf("%X",ledstring.channel[0].leds[i]);
+        ledstring.channel[0].leds[i] = c;
     }
 };
 

@@ -42,5 +42,5 @@ int main(int argc, char *argv[])
 	getchar();
 
     printf ("\n");
-    // Syn->~SynaesthetiQ();
+    Syn->~SynaesthetiQ();
 }
