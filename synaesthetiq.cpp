@@ -1,4 +1,5 @@
 #include "synaesthetiq.hpp"
+#include <vector>
 
 ws2811_led_t SynaesthetiQ::RGBToBGR(ws2811_led_t ColourIn) {
 	ws2811_led_t outColour = 0x00000000;
@@ -72,7 +73,10 @@ SynaesthetiQ::SynaesthetiQ(){
         },
     };
 
-    
+    // std::vector<ws2811_led_t> leds(matrixPixels+bigLEDCount,0);
+    // ws2811_led_t leds = (ws2811_led_t) malloc(sizeof(ws2811_led_t) * (matrixPixels+bigLEDCount));
+
+    // ledstring.channel[0].leds = &leds;
 
     if ((ret = ws2811_init(&ledstring)) != WS2811_SUCCESS)
     {
@@ -104,6 +108,8 @@ void SynaesthetiQ::setMatrixColour(ws2811_led_t Colour) {
         start = 0;
         end = matrixPixels;
     }
+
+    printf("%u %u",start,end);
 
     for (int i = start; i < end; i++) {
         ledstring.channel[0].leds[i] = RGBToBGR(Colour);
@@ -255,9 +261,12 @@ ws2811_return_t SynaesthetiQ::render() {
 
     limitMatrixCurrent();
     
+    ws2811_return_t ret;
+
     if ((ret = ws2811_render(&ledstring)) != WS2811_SUCCESS)
 	{
 	    fprintf(stderr, "ws2811_render failed: %s\n", ws2811_get_return_t_str(ret));
 	    return ret;
 	}
+    return ret;
 };
