@@ -11,6 +11,6 @@ include_directories(/usr/local/lib)
 
 target_link_libraries(SynaesthetiQ /usr/local/lib/libws2811.a)
 
-set(HEADERS synaesthetiq.hpp)
+set(HEADERS synaesthetiq.hpp Colour.hpp)
 
 target_include_directories(SynaesthetiQ PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
