@@ -29,7 +29,7 @@ class SynaesthetiQ {            // The class
         double  systemBrightness = 50.0;     // System Brightness expressed as a percentage. Default 50%
         ws2811_t ledstring;
         ws2811_return_t ret;
-        int clear_on_exit = 1;
+        bool clear_on_exit = true;
         ws2811_led_t bigLEDColour;           // Big LED Colour 0x00FF0000 R 0x0000FF00 G 0x000000FF B
         ws2811_led_t RGBToBGR(ws2811_led_t ColourIn);
         ws2811_led_t basicMatrixLimit(ws2811_led_t ColourIn);

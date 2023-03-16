@@ -115,7 +115,7 @@ void SynaesthetiQ::setMatrixColour(ws2811_led_t Colour) {
 
     for (int i = start; i < end; i++) {
         ws2811_led_t c = RGBToBGR(Colour);
-        // printf("%X",ledstring.channel[0].leds[i]);
+        printf("%X ",c);
         ledstring.channel[0].leds[i] = c;
     }
 };
@@ -265,7 +265,7 @@ ws2811_return_t SynaesthetiQ::render() {
 
     limitMatrixCurrent();
     
-    ws2811_return_t ret;
+    // ws2811_return_t ret;
 
     if ((ret = ws2811_render(&ledstring)) != WS2811_SUCCESS)
 	{

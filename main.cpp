@@ -25,22 +25,23 @@ int main(int argc, char *argv[])
 
 	getchar();
 
-	colour = 0x000f000f;
+	// colour = 0x000f000f;
 
-	Syn->setBigLEDColour(colour);
-    Syn->setMatrixColour(colour);
-    Syn->render();
+	// Syn->setBigLEDColour(colour);
+    // Syn->setMatrixColour(colour);
+    // Syn->render();
 
-	getchar();
+	// getchar();
 
-	colour = 0x00ffffff;
+	// colour = 0x00ffffff;
 
-	Syn->setBigLEDColour(colour);
-    Syn->setMatrixColour(colour);
-    Syn->render();
+	// Syn->setBigLEDColour(colour);
+    // Syn->setMatrixColour(colour);
+    // Syn->render();
 
-	getchar();
+	// getchar();
 
     printf ("\n");
-    Syn->~SynaesthetiQ();
+    // Syn->~SynaesthetiQ();
+    delete Syn; 
 }
