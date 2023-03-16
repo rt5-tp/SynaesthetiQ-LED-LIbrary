@@ -1,4 +1,5 @@
-#include <synaesthetiq.hpp>
+#include "synaesthetiq.hpp"
+#include <vector>
 
 ws2811_led_t SynaesthetiQ::RGBToBGR(ws2811_led_t ColourIn) {
 	ws2811_led_t outColour = 0x00000000;
@@ -50,33 +51,40 @@ ws2811_led_t SynaesthetiQ::basicMatrixLimit(ws2811_led_t ColourIn) {
 }
 
 SynaesthetiQ::SynaesthetiQ(){
+
     ledstring = {
         .freq = WS2811_TARGET_FREQ,
         .dmanum = DMA,
         .channel =
         {
-            [0] =
-            {
+            [0] = {
                 .gpionum = GPIO_PIN,
                 .invert = 0,
                 .count = matrixPixels+bigLEDCount,
                 .strip_type = STRIP_TYPE,
                 .brightness = 255,
             },
-            [1] =
-            {
+            [1] = {
                 .gpionum = 0,
                 .invert = 0,
                 .count = 0,
                 .brightness = 0,
-            },
+            }
         },
     };
+
+    // std::vector<ws2811_led_t> leds(matrixPixels+bigLEDCount,0);
+    // ws2811_led_t leds = (ws2811_led_t) malloc(sizeof(ws2811_led_t) * (matrixPixels+bigLEDCount));
+
+    // ledstring.channel[0].leds = &leds;
+
     if ((ret = ws2811_init(&ledstring)) != WS2811_SUCCESS)
     {
         fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(ret));
         exit(ret);
     }
+
+    // ledstring = leds;
     // rawLEDs = &ledstring.channel[0];
 }
 
@@ -103,8 +111,12 @@ void SynaesthetiQ::setMatrixColour(ws2811_led_t Colour) {
         end = matrixPixels;
     }
 
+    // printf("%u %u",start,end);
+
     for (int i = start; i < end; i++) {
-        ledstring.channel[0].leds[i] = RGBToBGR(Colour);
+        ws2811_led_t c = RGBToBGR(Colour);
+        printf("%X ",c);
+        ledstring.channel[0].leds[i] = c;
     }
 };
 
@@ -115,7 +127,8 @@ void SynaesthetiQ::setMatrixPixelColour(int x,int y,int Colour) {
     } else {
         matrixStart = 0;
     }
-    int chainPos = matrixStart + XYtoChainPos(XYPos{x,y});
+    XYPos XY = {x,y}; 
+    int chainPos = matrixStart + XYtoChainPos(XY);
 
     ledstring.channel[0].leds[chainPos] = RGBToBGR(Colour);
 };
@@ -201,7 +214,7 @@ void SynaesthetiQ::applyFactorToMatrix(double factor) {
     }
 };
 
-int XYtoChainPos(XYPos XY) {
+int SynaesthetiQ::XYtoChainPos(XYPos XY) {
     int x = XY.x;
     int y = XY.y;
     int pos = 0;
@@ -218,7 +231,7 @@ int XYtoChainPos(XYPos XY) {
     return pos;
 };
 
-XYPos ChainPostoXY(int ChainPos) {
+XYPos SynaesthetiQ::ChainPostoXY(int ChainPos) {
     int x = 0;
     int y = 0;
     
@@ -231,7 +244,8 @@ XYPos ChainPostoXY(int ChainPos) {
     int oddCol = inverseX%2;
     int invYRel = (7-yRel);
     y = y + (yRel*oddCol+ invYRel*(! oddCol));
-    return XYPos{x,y};
+    XYPos XY = {x,y}; 
+    return XY;
 };
 
 ws2811_led_t SynaesthetiQ::getColour(uint8_t r,uint8_t g, uint8_t b) {
@@ -251,9 +265,12 @@ ws2811_return_t SynaesthetiQ::render() {
 
     limitMatrixCurrent();
     
+    // ws2811_return_t ret;
+
     if ((ret = ws2811_render(&ledstring)) != WS2811_SUCCESS)
 	{
 	    fprintf(stderr, "ws2811_render failed: %s\n", ws2811_get_return_t_str(ret));
 	    return ret;
 	}
+    return ret;
 };
