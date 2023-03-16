@@ -5,3 +5,5 @@ rpi_ws281x/
 build/
 
 synaesthetiq
+
+basic.cpp

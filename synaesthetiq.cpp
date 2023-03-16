@@ -52,40 +52,37 @@ ws2811_led_t SynaesthetiQ::basicMatrixLimit(ws2811_led_t ColourIn) {
 
 SynaesthetiQ::SynaesthetiQ(){
 
-    ledstring = {
-        .freq = WS2811_TARGET_FREQ,
-        .dmanum = DMA,
-        .channel =
-        {
-            [0] = {
+    ws2811_channel_t chn = {
                 .gpionum = GPIO_PIN,
                 .invert = 0,
                 .count = matrixPixels+bigLEDCount,
                 .strip_type = STRIP_TYPE,
                 .brightness = 255,
-            },
-            [1] = {
+            };
+    ws2811_channel_t nll = {
                 .gpionum = 0,
                 .invert = 0,
                 .count = 0,
                 .brightness = 0,
-            }
+            };
+
+    ws2811_t leds = {
+        .freq = 800000,
+        .dmanum = DMA,
+        .channel =
+        {
+            [0] = chn,
+            [1] = nll,
         },
     };
 
-    // std::vector<ws2811_led_t> leds(matrixPixels+bigLEDCount,0);
-    // ws2811_led_t leds = (ws2811_led_t) malloc(sizeof(ws2811_led_t) * (matrixPixels+bigLEDCount));
-
-    // ledstring.channel[0].leds = &leds;
-
-    if ((ret = ws2811_init(&ledstring)) != WS2811_SUCCESS)
+    if ((ret = ws2811_init(&leds)) != WS2811_SUCCESS)
     {
         fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(ret));
         exit(ret);
     }
 
-    // ledstring = leds;
-    // rawLEDs = &ledstring.channel[0];
+    ledstring = leds;
 }
 
 SynaesthetiQ::~SynaesthetiQ() {
@@ -115,7 +112,7 @@ void SynaesthetiQ::setMatrixColour(ws2811_led_t Colour) {
 
     for (int i = start; i < end; i++) {
         ws2811_led_t c = RGBToBGR(Colour);
-        printf("%X ",c);
+        // printf("%X ",c);
         ledstring.channel[0].leds[i] = c;
     }
 };
@@ -266,6 +263,9 @@ ws2811_return_t SynaesthetiQ::render() {
     limitMatrixCurrent();
     
     // ws2811_return_t ret;
+    for (int i = 0; i < matrixPixels+bigLEDCount; i++) {
+        printf("0x%08X ",ledstring.channel[0].leds[i]);
+    }
 
     if ((ret = ws2811_render(&ledstring)) != WS2811_SUCCESS)
 	{
