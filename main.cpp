@@ -15,13 +15,13 @@
 
 int main(int argc, char *argv[])
 {
-    SynaesthetiQ *Syn = new SynaesthetiQ();
+    SynaesthetiQ Syn;
 
 	ws2811_led_t colour = 0x0000000f;
 
-	Syn->setBigLEDColour(colour);
-    Syn->setMatrixColour(colour);
-    Syn->render();
+	Syn.setBigLEDColour(colour);
+    Syn.setMatrixColour(colour);
+    Syn.render();
 
 	getchar();
 
