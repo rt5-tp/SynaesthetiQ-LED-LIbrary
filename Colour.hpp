@@ -1,3 +1,6 @@
+#ifndef COLOUR_HPP
+#define COLOUR_HPP
+
 #include <stdint.h>
 
 class Colour {
@@ -8,6 +11,10 @@ class Colour {
     uint8_t blue;
 
     public:
+
+    // default constructor sets all values to 0
+    Colour() : red(0), green(0), blue(0){
+    }
 
     Colour(uint8_t redIn, uint8_t greenIn, uint8_t blueIn) : red(redIn), green(greenIn), blue(blueIn) {
     }
@@ -52,3 +59,5 @@ class Colour {
     }
 
 };
+
+#endif

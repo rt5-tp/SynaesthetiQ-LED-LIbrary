@@ -1,5 +1,6 @@
 #include <string>
 #include "ws2811.h"
+#include "Colour.hpp"
 
 // #define TARGET_FREQ             WS2811_TARGET_FREQ
 #define GPIO_PIN                10
@@ -25,21 +26,20 @@ class SynaesthetiQ {            // The class
         double        maxBigLEDCurrent = 3.0;    // Max Big LED Current expressed as amps.
         const int     bigLEDCount      = 1;      // Must be one.
         bool          bigLEDFirst      = true;
-        
+
         double  systemBrightness = 50.0;     // System Brightness expressed as a percentage. Default 50%
         ws2811_t ledstring;
         ws2811_return_t ret;
         bool clear_on_exit = true;
-        ws2811_led_t bigLEDColour;           // Big LED Colour 0x00FF0000 R 0x0000FF00 G 0x000000FF B
-        ws2811_led_t RGBToBGR(ws2811_led_t ColourIn);
-        ws2811_led_t basicMatrixLimit(ws2811_led_t ColourIn);
-        ws2811_led_t bigLEDLimit(ws2811_led_t ColourIn);
+        Colour bigLEDColour;           // Big LED Colour 0x00FF0000 R 0x0000FF00 G 0x000000FF B
+        Colour basicMatrixLimit(Colour ColourIn);
+        Colour bigLEDLimit(Colour colourIn);
 
         void limitMatrixCurrent();
         AMPS calculateMatrixCurrent();        // Matrix Current in amps.
-        MILLIAMPS calculateLEDCurrent(MILLIAMPS LEDMaxCurrentPerChannel,ws2811_led_t colour);           // LED Current in milli amps
+        MILLIAMPS calculateLEDCurrent(MILLIAMPS LEDMaxCurrentPerChannel,Colour colour);           // LED Current in milli amps
         void applyFactorToMatrix(double factor);
-        ws2811_led_t applyFactorToLED(double factor, ws2811_led_t colour);
+        Colour applyFactorToLED(double factor, Colour colour);
 
         int XYtoChainPos(XYPos XY);
         XYPos ChainPostoXY(int ChainPos);
@@ -52,10 +52,9 @@ class SynaesthetiQ {            // The class
         }
         SynaesthetiQ(); 
         ~SynaesthetiQ();
-        ws2811_led_t getColour(uint8_t r,uint8_t g, uint8_t b);
-        void setBigLEDColour(ws2811_led_t Colour);
-        void setMatrixColour(ws2811_led_t Colour);
-        void setMatrixPixelColour(int x,int y,int Colour);
+        void setBigLEDColour(Colour colour);
+        void setMatrixColour(Colour colour);
+        void setMatrixPixelColour(int x,int y,Colour colour);
         // void setMatrix();           // Takes a matrix format as input. Uses an assosiative array under the hood.
         void clearOutput();
         ws2811_return_t render();
