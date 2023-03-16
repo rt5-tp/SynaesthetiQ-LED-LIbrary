@@ -1,0 +1,13 @@
+name: Compile code
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: make
+      run: make
