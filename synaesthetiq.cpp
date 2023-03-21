@@ -1,32 +1,19 @@
 #include "synaesthetiq.hpp"
+#include "Colour.hpp"
 #include <vector>
 
-ws2811_led_t SynaesthetiQ::RGBToBGR(ws2811_led_t ColourIn) {
-	ws2811_led_t outColour = 0x00000000;
 
-	int r = (0x00ff0000 & ColourIn)>>16;
-	int g = (0x0000ff00 & ColourIn)>>8;
-	int b = (0x000000ff & ColourIn);
-
-	outColour = (( (g<<8) | r) << 8 ) | b;
-
-	return outColour;
+Colour SynaesthetiQ::bigLEDLimit(Colour colourIn) { 
+    return colourIn;
 }
 
-ws2811_led_t SynaesthetiQ::bigLEDLimit(ws2811_led_t ColourIn) { 
-    return ColourIn;
-}
-
-ws2811_led_t SynaesthetiQ::basicMatrixLimit(ws2811_led_t ColourIn) {
-	int r = (0x00ff0000 & ColourIn)>>16;
-    int g = (0x0000ff00 & ColourIn)>>8;
-    int b = (0x000000ff & ColourIn);
+Colour SynaesthetiQ::basicMatrixLimit(Colour colourIn) {
 
 	double currentPerColour = 0.02;
 
-	double rp = (((double) r)/255)*currentPerColour;
-	double gp = (((double) g)/255)*currentPerColour;
-	double bp = (((double) b)/255)*currentPerColour;
+	double rp = (((double) colourIn.getRed())/255)*currentPerColour;
+	double gp = (((double) colourIn.getGreen())/255)*currentPerColour;
+	double bp = (((double) colourIn.getBlue())/255)*currentPerColour;
 
 	printf("%f %f %f \n",rp,gp,bp);
 
@@ -39,18 +26,19 @@ ws2811_led_t SynaesthetiQ::basicMatrixLimit(ws2811_led_t ColourIn) {
 	if (tp > maxCurrentPerChip) {
 		double factor = (maxCurrentPerChip/tp);
 
-		int ro = (int) ((float) r*factor);
-		int go = (int) ((float) g*factor);
-		int bo = (int) ((float) b*factor);
+		int ro = (int) ((float) colourIn.getRed()*factor);
+		int go = (int) ((float) colourIn.getGreen()*factor);
+		int bo = (int) ((float) colourIn.getBlue()*factor);
 
 		printf("%f\n", factor);
+        Colour colour(ro, go, bo);
 
-		return (( (ro<<8) | go) << 8 ) | bo;
+		return colour;
 	}
-	return ColourIn;
+	return colourIn;
 }
 
-SynaesthetiQ::SynaesthetiQ(){
+SynaesthetiQ::SynaesthetiQ() {
 
     ws2811_channel_t chn = {
                 .gpionum = GPIO_PIN,
@@ -92,11 +80,11 @@ SynaesthetiQ::~SynaesthetiQ() {
     ws2811_fini(&ledstring);
 };
 
-void SynaesthetiQ::setBigLEDColour(ws2811_led_t Colour) {
-    bigLEDColour = bigLEDLimit(Colour);
+void SynaesthetiQ::setBigLEDColour(Colour colour) {
+    bigLEDColour = bigLEDLimit(colour);
 };
 
-void SynaesthetiQ::setMatrixColour(ws2811_led_t Colour) {
+void SynaesthetiQ::setMatrixColour(Colour colourIn) {
     int start;
     int end;
 
@@ -110,14 +98,14 @@ void SynaesthetiQ::setMatrixColour(ws2811_led_t Colour) {
 
     // printf("%u %u",start,end);
 
+    auto colourInGRB = colourIn.getGRB();
     for (int i = start; i < end; i++) {
-        ws2811_led_t c = RGBToBGR(Colour);
-        // printf("%X ",c);
-        ledstring.channel[0].leds[i] = c;
+        // printf("%X ",colourInGRB);
+        ledstring.channel[0].leds[i] = colourInGRB;
     }
 };
 
-void SynaesthetiQ::setMatrixPixelColour(int x,int y,int Colour) {
+void SynaesthetiQ::setMatrixPixelColour(int x,int y, Colour colourIn) {
     int matrixStart;
     if (bigLEDFirst) {
         matrixStart = bigLEDCount;
@@ -127,14 +115,12 @@ void SynaesthetiQ::setMatrixPixelColour(int x,int y,int Colour) {
     XYPos XY = {x,y}; 
     int chainPos = matrixStart + XYtoChainPos(XY);
 
-    ledstring.channel[0].leds[chainPos] = RGBToBGR(Colour);
+    ledstring.channel[0].leds[chainPos] = colourIn.getGRB();
 };
 
 void SynaesthetiQ::clearOutput() {
-    ws2811_led_t Colour = colourOff;
-
-    bigLEDColour = Colour;
-    setMatrixColour(Colour);
+    Colour colour(colourOff);
+    setMatrixColour(colour);
     
     render();
 }
@@ -162,36 +148,25 @@ AMPS SynaesthetiQ::calculateMatrixCurrent() {
     MILLIAMPS current;
 
     for (int i = start; i < end; i++) {
-        current += calculateLEDCurrent(matrixPixelCurrentPerChannel,ledstring.channel[0].leds[i]);
+        current += calculateLEDCurrent(matrixPixelCurrentPerChannel, Colour(ledstring.channel[0].leds[i]));
     }
 
     return current/1000;
 };
 
-MILLIAMPS SynaesthetiQ::calculateLEDCurrent(MILLIAMPS LEDMaxCurrentPerChannel,ws2811_led_t colour) {
-    uint8_t r = (0x00ff0000 & colour)>>16;
-    uint8_t g = (0x0000ff00 & colour)>>8;
-    uint8_t b = (0x000000ff & colour);
-
+MILLIAMPS SynaesthetiQ::calculateLEDCurrent(MILLIAMPS LEDMaxCurrentPerChannel,Colour colourIn) {
     MILLIAMPS current = 0;
 
-    current += ((double) r/255)*LEDMaxCurrentPerChannel;
-    current += ((double) g/255)*LEDMaxCurrentPerChannel;
-    current += ((double) b/255)*LEDMaxCurrentPerChannel;
+    current += ((double) colourIn.getRed()/255)*LEDMaxCurrentPerChannel;
+    current += ((double) colourIn.getGreen()/255)*LEDMaxCurrentPerChannel;
+    current += ((double) colourIn.getBlue()/255)*LEDMaxCurrentPerChannel;
 
     return current;
 }
 
-ws2811_led_t SynaesthetiQ::applyFactorToLED(double factor, ws2811_led_t colour) {
-    uint8_t r = (0x00ff0000 & colour)>>16;
-    uint8_t g = (0x0000ff00 & colour)>>8;
-    uint8_t b = (0x000000ff & colour);
-
-    uint8_t ro = (uint8_t) ((float) r*factor);
-    uint8_t go = (uint8_t) ((float) g*factor);
-    uint8_t bo = (uint8_t) ((float) b*factor);
-
-    return (( (ro<<8) | go) << 8 ) | bo;
+Colour SynaesthetiQ::applyFactorToLED(double factor, Colour colourIn) {
+    Colour factoredColour(colourIn.getRed()*factor, colourIn.getGreen()*factor, colourIn.getBlue()*factor);
+    return factoredColour;
 }
 
 void SynaesthetiQ::applyFactorToMatrix(double factor) {
@@ -207,7 +182,7 @@ void SynaesthetiQ::applyFactorToMatrix(double factor) {
     }
 
     for (int i = start; i < end; i++) {
-        ledstring.channel[0].leds[i] = applyFactorToLED(factor,ledstring.channel[0].leds[i]);
+        ledstring.channel[0].leds[i] = applyFactorToLED(factor,Colour(ledstring.channel[0].leds[i])).getGRB();
     }
 };
 
@@ -245,18 +220,16 @@ XYPos SynaesthetiQ::ChainPostoXY(int ChainPos) {
     return XY;
 };
 
-ws2811_led_t SynaesthetiQ::getColour(uint8_t r,uint8_t g, uint8_t b) {
-    return (( (r<<8) | g) << 8 ) | b;
-};
-
 ws2811_return_t SynaesthetiQ::render() {
+
+    auto bigLEDColourGRB = bigLEDColour.getGRB();
     if (bigLEDFirst) {
         for (int i = 0; i < bigLEDCount; i++) {
-            ledstring.channel[0].leds[i] = bigLEDColour;
+            ledstring.channel[0].leds[i] = bigLEDColourGRB;
         }
     } else {
         for (int i = matrixPixels; i < matrixPixels+bigLEDCount; i++) {
-            ledstring.channel[0].leds[i] = bigLEDColour;
+            ledstring.channel[0].leds[i] = bigLEDColourGRB;
         }
     }
 
