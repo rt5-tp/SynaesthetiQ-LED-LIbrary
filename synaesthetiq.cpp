@@ -57,11 +57,7 @@ SynaesthetiQ::SynaesthetiQ() {
     ws2811_t leds = {
         .freq = 800000,
         .dmanum = DMA,
-        .channel =
-        {
-            [0] = chn,
-            [1] = nll,
-        },
+        .channel = {chn, nll},
     };
 
     if ((ret = ws2811_init(&leds)) != WS2811_SUCCESS)
@@ -127,6 +123,7 @@ void SynaesthetiQ::clearOutput() {
 
 void SynaesthetiQ::limitMatrixCurrent() {
     double current = calculateMatrixCurrent();
+    printf("Current= %f\n",current);
     if (current > maxMatrixCurrent) {
         double factor = maxMatrixCurrent/current;
         applyFactorToMatrix(factor);
@@ -157,10 +154,13 @@ AMPS SynaesthetiQ::calculateMatrixCurrent() {
 MILLIAMPS SynaesthetiQ::calculateLEDCurrent(MILLIAMPS LEDMaxCurrentPerChannel,Colour colourIn) {
     MILLIAMPS current = 0;
 
+    printf("M=%f ", LEDMaxCurrentPerChannel);
+    printf("R=%d ",colourIn.getRed());
     current += ((double) colourIn.getRed()/255)*LEDMaxCurrentPerChannel;
     current += ((double) colourIn.getGreen()/255)*LEDMaxCurrentPerChannel;
     current += ((double) colourIn.getBlue()/255)*LEDMaxCurrentPerChannel;
-
+    
+    printf("C=%f \t",current);
     return current;
 }
 
