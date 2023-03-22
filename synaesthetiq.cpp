@@ -123,7 +123,7 @@ void SynaesthetiQ::clearOutput() {
 
 void SynaesthetiQ::limitMatrixCurrent() {
     double current = calculateMatrixCurrent();
-    printf("Current= %f\n",current);
+    // printf("Current= %f\n",current);
     if (current > maxMatrixCurrent) {
         double factor = maxMatrixCurrent/current;
         applyFactorToMatrix(factor);
@@ -154,13 +154,13 @@ AMPS SynaesthetiQ::calculateMatrixCurrent() {
 MILLIAMPS SynaesthetiQ::calculateLEDCurrent(MILLIAMPS LEDMaxCurrentPerChannel,Colour colourIn) {
     MILLIAMPS current = 0;
 
-    printf("M=%f ", LEDMaxCurrentPerChannel);
-    printf("R=%d ",colourIn.getRed());
+    // printf("M=%f ", LEDMaxCurrentPerChannel);
+    // printf("R=%d ",colourIn.getRed());
     current += ((double) colourIn.getRed()/255)*LEDMaxCurrentPerChannel;
     current += ((double) colourIn.getGreen()/255)*LEDMaxCurrentPerChannel;
     current += ((double) colourIn.getBlue()/255)*LEDMaxCurrentPerChannel;
     
-    printf("C=%f \t",current);
+    // printf("C=%f \t",current);
     return current;
 }
 
