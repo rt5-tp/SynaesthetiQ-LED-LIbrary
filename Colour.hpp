@@ -21,41 +21,41 @@ class Colour {
 
     // takes in a 32 bit number of form XRGB, where X is an empty byte
     Colour(uint32_t XRGBIn){
-        this->red = (uint8_t)(0x00ff0000 & XRGBIn)>>16;
-        this->green = (uint8_t)(0x0000ff00 & XRGBIn)>>8;
-        this->blue = (uint8_t)(0x000000ff & XRGBIn);
+        red = (uint8_t)((0x00ff0000 & XRGBIn)>>16);
+        green = (uint8_t)((0x0000ff00 & XRGBIn)>>8);
+        blue = (uint8_t)(0x000000ff & XRGBIn);
     }
 
     uint32_t getGRB() {
-        return (uint32_t) (( (this->green<<8) | this->red) << 8 ) | this->blue;
+        return (uint32_t) (( (((uint32_t)green)<<8) | ((uint32_t)red)) << 8 ) | ((uint32_t)blue);
     }
 
     uint32_t getRGB() {
-        return (uint32_t) (( (this->red<<8) | this->green) << 8 ) | this->blue;
+        return (uint32_t) (( (((uint32_t)red)<<8) | ((uint32_t)green)) << 8 ) | ((uint32_t)blue);
     }
 
     uint8_t getRed(){
-        return this->red;
+        return red;
     }
 
     uint8_t getGreen(){
-        return this->green;
+        return green;
     }
 
     uint8_t getBlue(){
-        return this->blue;
+        return blue;
     }
 
     void setRed(uint8_t redIn){
-        this->red = redIn;
+        red = redIn;
     }
 
     void setGreen(uint8_t greenIn){
-        this->green = greenIn;
+        green = greenIn;
     }
 
     void setBlue(uint8_t blueIn){
-        this->blue = blueIn;
+        blue = blueIn;
     }
 
 };
