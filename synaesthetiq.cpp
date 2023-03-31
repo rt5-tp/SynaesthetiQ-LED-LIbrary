@@ -123,11 +123,12 @@ void SynaesthetiQ::clearOutput() {
 
 void SynaesthetiQ::limitMatrixCurrent() {
     double current = calculateMatrixCurrent();
-    // printf("Current= %f\n",current);
+    printf("Current= %f\n",current);
     if (current > maxMatrixCurrent) {
         double factor = maxMatrixCurrent/current;
         applyFactorToMatrix(factor);
     }
+    printf("PostLimitCurrent= %f\n",calculateMatrixCurrent());
 };
 
 AMPS SynaesthetiQ::calculateMatrixCurrent() {
@@ -236,9 +237,9 @@ ws2811_return_t SynaesthetiQ::render() {
     limitMatrixCurrent();
     
     // ws2811_return_t ret;
-    for (int i = 0; i < matrixPixels+bigLEDCount; i++) {
-        printf("0x%08X ",ledstring.channel[0].leds[i]);
-    }
+    // for (int i = 0; i < matrixPixels+bigLEDCount; i++) {
+    //     printf("0x%08X ",ledstring.channel[0].leds[i]);
+    // }
 
     if ((ret = ws2811_render(&ledstring)) != WS2811_SUCCESS)
 	{
