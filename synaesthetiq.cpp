@@ -117,6 +117,7 @@ void SynaesthetiQ::setMatrixPixelColour(int x,int y, Colour colourIn) {
 void SynaesthetiQ::clearOutput() {
     Colour colour(colourOff);
     setMatrixColour(colour);
+    setBigLEDColour(colour);
     
     render();
 }
