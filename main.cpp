@@ -13,6 +13,16 @@
 
 #include "synaesthetiq.hpp"
 
+#define WIDTH                   513
+#define HEIGHT                  1
+
+int width = WIDTH;
+int height = HEIGHT;
+int led_count = LED_COUNT;
+
+ws2811_led_t *matrix;
+static uint8_t running = 1;
+
 int main(int argc, char *argv[])
 {
     SynaesthetiQ *Syn = new SynaesthetiQ();
@@ -21,27 +31,27 @@ int main(int argc, char *argv[])
 
 	Syn->setBigLEDColour(colour);
     Syn->setMatrixColour(colour);
+    Syn->setMatrixPixelColour(0,0,colourOff);
     Syn->render();
 
 	getchar();
 
-	// colour = 0x000f000f;
+	colour = 0x000f000f;
 
-	// Syn->setBigLEDColour(colour);
-    // Syn->setMatrixColour(colour);
-    // Syn->render();
+	Syn->setBigLEDColour(colour);
+    Syn->setMatrixColour(colour);
+    Syn->render();
 
-	// getchar();
+	getchar();
 
-	// colour = 0x00ffffff;
+	colour = 0x00ffffff;
 
-	// Syn->setBigLEDColour(colour);
-    // Syn->setMatrixColour(colour);
-    // Syn->render();
+	Syn->setBigLEDColour(colour);
+    Syn->setMatrixColour(colour);
+    Syn->render();
 
-	// getchar();
+	getchar();
 
-    printf ("\n");
-    // Syn->~SynaesthetiQ();
+    printf ("\n\n");
     delete Syn; 
 }

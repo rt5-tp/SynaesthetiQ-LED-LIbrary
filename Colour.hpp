@@ -21,9 +21,9 @@ class Colour {
 
     // takes in a 32 bit number of form XRGB, where X is an empty byte
     Colour(uint32_t XRGBIn){
-        red = (uint8_t)((0x00ff0000 & XRGBIn)>>16);
-        green = (uint8_t)((0x0000ff00 & XRGBIn)>>8);
-        blue = (uint8_t)(0x000000ff & XRGBIn);
+        this->red = (uint8_t)((0x00ff0000 & XRGBIn)>>16);
+        this->green = (uint8_t)((0x0000ff00 & XRGBIn)>>8);
+        this->blue = (uint8_t)((0x000000ff & XRGBIn));
     }
 
     uint32_t getGRB() {

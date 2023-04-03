@@ -1,9 +1,10 @@
 .DS_Store
 .vscode
 
+rpi_ws281x/*
 rpi_ws281x/
 build/
 
-basic.cpp
-
 synaesthetiq
+
+basic.cpp

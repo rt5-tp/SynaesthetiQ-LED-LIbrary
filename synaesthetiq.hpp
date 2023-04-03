@@ -25,7 +25,7 @@ class SynaesthetiQ {            // The class
         double        matrixPixelCurrentPerChannel = 19.53;
         double        maxBigLEDCurrent = 3.0;    // Max Big LED Current expressed as amps.
         const int     bigLEDCount      = 1;      // Must be one.
-        bool          bigLEDFirst      = true;
+        bool          bigLEDFirst      = false;
 
         double  systemBrightness = 50.0;     // System Brightness expressed as a percentage. Default 50%
         ws2811_t ledstring;

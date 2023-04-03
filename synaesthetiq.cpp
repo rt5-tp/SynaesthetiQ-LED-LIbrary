@@ -40,40 +40,33 @@ Colour SynaesthetiQ::basicMatrixLimit(Colour colourIn) {
 
 SynaesthetiQ::SynaesthetiQ() {
 
-    ledstring = {
-        .freq = WS2811_TARGET_FREQ,
-        .dmanum = DMA,
-        .channel =
-        {
-            [0] = {
+    ws2811_channel_t chn = {
                 .gpionum = GPIO_PIN,
                 .invert = 0,
                 .count = matrixPixels+bigLEDCount,
                 .strip_type = STRIP_TYPE,
                 .brightness = 255,
-            },
-            [1] = {
+            };
+    ws2811_channel_t nll = {
                 .gpionum = 0,
                 .invert = 0,
                 .count = 0,
                 .brightness = 0,
-            }
-        },
+            };
+
+    ws2811_t leds = {
+        .freq = 800000,
+        .dmanum = DMA,
+        .channel = {chn, nll},
     };
 
-    // std::vector<ws2811_led_t> leds(matrixPixels+bigLEDCount,0);
-    // ws2811_led_t leds = (ws2811_led_t) malloc(sizeof(ws2811_led_t) * (matrixPixels+bigLEDCount));
-
-    // ledstring.channel[0].leds = &leds;
-
-    if ((ret = ws2811_init(&ledstring)) != WS2811_SUCCESS)
+    if ((ret = ws2811_init(&leds)) != WS2811_SUCCESS)
     {
         fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(ret));
         exit(ret);
     }
 
-    // ledstring = leds;
-    // rawLEDs = &ledstring.channel[0];
+    ledstring = leds;
 }
 
 SynaesthetiQ::~SynaesthetiQ() {
@@ -103,7 +96,7 @@ void SynaesthetiQ::setMatrixColour(Colour colourIn) {
 
     auto colourInGRB = colourIn.getGRB();
     for (int i = start; i < end; i++) {
-        printf("%X ",colourInGRB);
+        // printf("%X ",colourInGRB);
         ledstring.channel[0].leds[i] = colourInGRB;
     }
 };
@@ -124,16 +117,19 @@ void SynaesthetiQ::setMatrixPixelColour(int x,int y, Colour colourIn) {
 void SynaesthetiQ::clearOutput() {
     Colour colour(colourOff);
     setMatrixColour(colour);
+    setBigLEDColour(colour);
     
     render();
 }
 
 void SynaesthetiQ::limitMatrixCurrent() {
     double current = calculateMatrixCurrent();
+    printf("Current= %f\n",current);
     if (current > maxMatrixCurrent) {
         double factor = maxMatrixCurrent/current;
         applyFactorToMatrix(factor);
     }
+    printf("PostLimitCurrent= %f\n",calculateMatrixCurrent());
 };
 
 AMPS SynaesthetiQ::calculateMatrixCurrent() {
@@ -160,10 +156,13 @@ AMPS SynaesthetiQ::calculateMatrixCurrent() {
 MILLIAMPS SynaesthetiQ::calculateLEDCurrent(MILLIAMPS LEDMaxCurrentPerChannel,Colour colourIn) {
     MILLIAMPS current = 0;
 
+    // printf("M=%f ", LEDMaxCurrentPerChannel);
+    // printf("R=%d ",colourIn.getRed());
     current += ((double) colourIn.getRed()/255)*LEDMaxCurrentPerChannel;
     current += ((double) colourIn.getGreen()/255)*LEDMaxCurrentPerChannel;
     current += ((double) colourIn.getBlue()/255)*LEDMaxCurrentPerChannel;
-
+    
+    // printf("C=%f \t",current);
     return current;
 }
 
@@ -239,6 +238,9 @@ ws2811_return_t SynaesthetiQ::render() {
     limitMatrixCurrent();
     
     // ws2811_return_t ret;
+    // for (int i = 0; i < matrixPixels+bigLEDCount; i++) {
+    //     printf("0x%08X ",ledstring.channel[0].leds[i]);
+    // }
 
     if ((ret = ws2811_render(&ledstring)) != WS2811_SUCCESS)
 	{
