@@ -1,7 +1,7 @@
 #include "synaesthetiq.hpp"
 #include "Colour.hpp"
 #include <vector>
-
+#include <iostream>
 
 Colour SynaesthetiQ::bigLEDLimit(Colour colourIn) { 
     return colourIn;
@@ -102,6 +102,13 @@ void SynaesthetiQ::setMatrixColour(Colour colourIn) {
 };
 
 void SynaesthetiQ::setMatrixPixelColour(int x,int y, Colour colourIn) {
+    
+    if(x>31 || x<0 || y>15 || y<0){
+        std::cerr << "SynaesthetiQ pixel coordinate out of range\n";
+        throw std::exception();
+        return;
+    }
+    
     int matrixStart;
     if (bigLEDFirst) {
         matrixStart = bigLEDCount;
