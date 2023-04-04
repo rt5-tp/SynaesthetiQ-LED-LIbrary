@@ -11,7 +11,7 @@
 #include <stdarg.h>
 #include <getopt.h>
 
-#include "synaesthetiq.hpp"
+#include "SynaesthetiQ/synaesthetiq.hpp"
 
 #define WIDTH                   513
 #define HEIGHT                  1

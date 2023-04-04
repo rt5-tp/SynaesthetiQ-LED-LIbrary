@@ -1,5 +1,5 @@
 #include <string>
-#include "ws2811.h"
+#include "../ws2811/ws2811.h"
 #include "Colour.hpp"
 
 // #define TARGET_FREQ             WS2811_TARGET_FREQ
@@ -57,5 +57,5 @@ class SynaesthetiQ {            // The class
         void setMatrixPixelColour(int x,int y,Colour colour);
         // void setMatrix();           // Takes a matrix format as input. Uses an assosiative array under the hood.
         void clearOutput();
-        ws2811_return_t render();
+        int render();
 };

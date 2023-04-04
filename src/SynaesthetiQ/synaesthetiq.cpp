@@ -229,30 +229,14 @@ XYPos SynaesthetiQ::ChainPostoXY(int ChainPos) {
     return XY;
 };
 
-ws2811_return_t SynaesthetiQ::render() {
-
-    auto bigLEDColourGRB = bigLEDColour.getGRB();
-    if (bigLEDFirst) {
-        for (int i = 0; i < bigLEDCount; i++) {
-            ledstring.channel[0].leds[i] = bigLEDColourGRB;
-        }
-    } else {
-        for (int i = matrixPixels; i < matrixPixels+bigLEDCount; i++) {
-            ledstring.channel[0].leds[i] = bigLEDColourGRB;
-        }
-    }
+int SynaesthetiQ::render() {
 
     limitMatrixCurrent();
-    
-    // ws2811_return_t ret;
-    // for (int i = 0; i < matrixPixels+bigLEDCount; i++) {
-    //     printf("0x%08X ",ledstring.channel[0].leds[i]);
-    // }
 
     if ((ret = ws2811_render(&ledstring)) != WS2811_SUCCESS)
 	{
 	    fprintf(stderr, "ws2811_render failed: %s\n", ws2811_get_return_t_str(ret));
-	    return ret;
+        return -1;
 	}
-    return ret;
+    return 1;
 };
