@@ -18,6 +18,9 @@ struct XYPos
 typedef double AMPS;
 typedef double MILLIAMPS;
 
+/**
+ * @brief A class to manage the SynaesthetiQ and create visualisations
+ */
 class SynaesthetiQ {            // The class
     private:    // Access specifier
         double        maxMatrixCurrent = 10.0;   // Max Matrix Current expressed as amps.
@@ -44,18 +47,47 @@ class SynaesthetiQ {            // The class
         int XYtoChainPos(XYPos XY);
         XYPos ChainPostoXY(int ChainPos);
     public:
+
+        /**
+         * @brief Sets brightness of the SynaesthetiQ
+         */
         void setSystemBrightness(double Brightness) {
             systemBrightness = Brightness;
         };
+
+        /**
+         * @brief Gets brightness of the SynaesthetiQ
+         */
         double getSystemBrightness() {
             return systemBrightness;
         }
         SynaesthetiQ(); 
         ~SynaesthetiQ();
+
+        /**
+         * @brief Sets the colour of the top LED
+         */
         void setBigLEDColour(Colour colour);
+
+        /**
+         * @brief Sets the colour of the matrix
+         */
         void setMatrixColour(Colour colour);
+
+        /**
+         * @brief Sets the colour of an individual LED on the matrix using x, y coordinates
+         * 
+         * Coordinates range from 0<=x<32 and 0<=y<16
+         */
         void setMatrixPixelColour(int x,int y,Colour colour);
-        // void setMatrix();           // Takes a matrix format as input. Uses an assosiative array under the hood.
+
+        /**
+         * @brief Turns off all the SynaesthetiQ LEDs
+         */
         void clearOutput();
+
+        /**
+         * @brief Updates the SynasthetiQ with the colours set, while limiting current
+         */
         int render();
 };
